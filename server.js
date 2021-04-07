@@ -65,6 +65,7 @@ app.post("/api/user/login",(req,res)=>{
         res.json({"message": "login successful", "token": token });
     })
     .catch((msg)=>{
+        console.log("CHECK USER CATCH");
         res.status(422).json({"message": msg});
     });
 });
