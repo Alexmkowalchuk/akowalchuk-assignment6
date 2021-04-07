@@ -56,6 +56,7 @@ app.post("/api/user/register",(req,res)=>{
 app.post("/api/user/login",(req,res)=>{
     userService.checkUser(req.body)
     .then((user)=>{
+        console.log("CHECK USER THEN");
         var payload = {
             _id: user._id,
             userName: user.userName
