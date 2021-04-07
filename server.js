@@ -46,7 +46,7 @@ app.get("/",(req,res)=>{
 app.post("/api/user/register",(req,res)=>{
     userService.registerUser(req.body)
     .then((msg)=> {
-        res.json({"message": "BAAAD"});
+        res.json({"message": "Created"});
     })
     .catch((msg) =>{
         res.status(422).json({"message": msg})
