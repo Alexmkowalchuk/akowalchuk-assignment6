@@ -1,3 +1,4 @@
+require("dotenv").config({ path: __dirname + "/.env" });
 const express = require('express');
 const cors = require("cors");
 const jwt = require('jsonwebtoken');
@@ -62,7 +63,7 @@ app.post("/api/user/login",(req,res)=>{
             userName: user.userName,
             password: user.password
         };
-        let token = jwt.sign(payload,secretOrKey);
+        let token = jwt.sign(payload,process.env.JWT_SECRET);
         res.json({"message": "login successful", "token": token });
     }).catch((msg)=>{
         res.status(422).json({"message": msg});
