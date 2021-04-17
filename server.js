@@ -42,9 +42,16 @@ app.use(passport.initialize());
 
 /* TODO Add Your Routes Here */
 
-app.get("/",(req,res)=>{
-    res.json({"message": "start"});
+
+userService.connect()
+.then(() => {
+    app.listen(HTTP_PORT, () => { console.log("API listening on: " + HTTP_PORT) });
 })
+.catch((err) => {
+    console.log("unable to start the server: " + err);
+    process.exit();
+});
+
 
 app.post("/api/user/register",(req,res)=>{
     userService.registerUser(req.body)
@@ -101,13 +108,5 @@ app.delete("/app/user/favorites/:id", passport.authenticate('jwt', {session: fal
     });
 });
 
-userService.connect()
-.then(() => {
-    app.listen(HTTP_PORT, () => { console.log("API listening on: " + HTTP_PORT) });
-})
-.catch((err) => {
-    console.log("unable to start the server: " + err);
-    process.exit();
-});
 
 
