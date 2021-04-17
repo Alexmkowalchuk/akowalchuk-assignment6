@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const passport = require("passport");
 const passportJWT = require("passport-jwt");
 const dotenv = require("dotenv");
-
+const bodyParser = require("body-parser");
 dotenv.config();
 
 const userService = require("./user-service.js");
@@ -15,6 +15,7 @@ const app = express();
 const HTTP_PORT = process.env.PORT || 8080;
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.json());
 
 let  ExtractJwt = passportJWT.ExtractJwt;
 let JwtStrategy = passportJWT.Strategy;
@@ -73,7 +74,7 @@ app.post("/api/user/login",(req,res)=>{
 app.get("/api/user/favorites", passport.authenticate('jwt', {session: false}), (req,res)=>{
     userService.getFavourites(req.user._id)
     .then((favorites)=>{
-        res.json({"favorites": favorites});
+        res.json(favorites);
     })
     .catch((msg)=>{
         res.json({"message":msg});
@@ -83,7 +84,7 @@ app.get("/api/user/favorites", passport.authenticate('jwt', {session: false}), (
 app.put("/api/user/favorites/:id", passport.authenticate('jwt', {session: false}), (res,req)=>{
     userService.addFavourite(req.user._id,req.params.id)
     .then((favorites)=>{
-        res.json({"favorites": favorites});
+        res.json(favorites);
     })
     .catch((msg)=>{
         res.json({"message":msg});
@@ -93,7 +94,7 @@ app.put("/api/user/favorites/:id", passport.authenticate('jwt', {session: false}
 app.delete("/app/user/favorites/:id", passport.authenticate('jwt', {session: false}),(req,res)=>{
     userService.removeFavourite(req.params.id)
     .then((favorites)=>{
-        res.json({"favorites": favorites});
+        res.json(favorites);
     })
     .catch((msg)=>{
         res.json({"message":msg});
