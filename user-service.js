@@ -123,6 +123,7 @@ module.exports.addFavourite = function (id, favId) {
 };
 
 module.exports.removeFavourite = function (id, favId) {
+  console.log(favId);
   return new Promise(function (resolve, reject) {
     User.findByIdAndUpdate(id, { $pull: { favourites: favId } }, { new: true })
       .exec()

@@ -53,55 +53,32 @@ userService
     console.log("unable to start the server: " + err);
     process.exit();
   });
-app.post("/api/user/register", function (req, res) {
-  console.log(req.body);
-  userService
-    .registerUser(req.body)
-    .then((data) => {
-      console.log(data);
-      res.json({ msg: data });
+  app.post("/api/user/register",(req,res)=>{
+    userService.registerUser(req.body)
+    .then((msg)=> {
+        res.json({"message": "Created"});
     })
-    .catch((err) => {
-      console.log(err);
-      res.status(422).json({ Error: err });
+    .catch((msg) =>{
+        res.status(422).json({"message": msg})
     });
 });
 
-app.post("/api/user/login", function (req, res) {
-    userService
-      .checkUser(req.body)
-      .then((user) => {
+app.post("/api/user/login",(req,res)=>{
+    userService.checkUser(req.body)
+    .then((user)=>{
         let payload = {
-          _id: user._id,
-          userName: user.userName,
-          password: user.password,
+            _id: user._id,
+            userName: user.userName,
+            password: user.password
         };
+        let token = jwt.sign(payload,process.env.JWT_SECRET);
+        res.json({"message": "login successful", "token": token });
+    }).catch((msg)=>{
+        res.status(422).json({"message": msg});
+    });
+});
 
-        const token = jwt.sign(payload, process.env.JWT_SECRET);
-        res.status(200).json({ message: "Login Successful", token: token });
-      })
-      .catch((err) => {
-        res.status(422).json({ msg: "Error 422: User not found." });
-      });
-  });
-
-  app.get(
-    "/api/user/favourites",
-    passport.authenticate("jwt", { session: false }),
-    (req, res) => {
-      userService
-        .getFavourites(req.user._id)
-        .then((data) => {
-          console.log(data);
-          res.json(data);
-        })
-        .catch((err) => {
-          res.json({ msg: err });
-        });
-    }
-  );
-
-  app.put(
+app.put(
     "/api/user/favourites/:id",
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
@@ -115,4 +92,25 @@ app.post("/api/user/login", function (req, res) {
         });
     }
   );
+
+  app.get("/api/user/favourites",passport.authenticate("jwt", { session: false }),(req, res) => { 
+    userService.getFavourites(req.user._id)
+      .then((data) => {
+        console.log(data);
+        res.json(data);
+      })
+      .catch((err) => {
+        res.json({ msg: err });
+      });
+  });
+
+app.delete("/api/user/favourites/:id", passport.authenticate('jwt', {session: false}),(req,res)=>{ 
+  userService.removeFavourite(req.user._id,req.params.id)
+    .then((favorites)=>{
+        res.json(favorites);
+    })
+    .catch((msg)=>{
+        res.json({"message":msg});
+    });
+});
   
